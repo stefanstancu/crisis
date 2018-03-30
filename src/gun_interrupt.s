@@ -1,5 +1,6 @@
 .equ GPIO, 0xFF200060
 .equ LED, 0xFF200000
+.equ TIMER, 0xFF202000 
 
 .global _start
 _start:
@@ -26,9 +27,11 @@ _start:
 
 .section .exceptions, "ax"
 my_handler:
-	addi sp, sp, -8		#creates space on stack and saves return address and r16
+	addi sp, sp, -16		#creates space on stack and saves return address and r16
 	stwio r16, 0(sp)
 	stwio ra, 4(sp)
+	stwio r17, 8(sp)
+	stwio r18, 12(sp)
 				
 	movia r16, 0xFFFFFFFF		
 	movia et, GPIO 		#writes 0 to acknowledge bit for GPIO pins
@@ -44,21 +47,37 @@ my_handler:
 	beq et, r16, LED_OFF		#if LEDS are on turn them off
 
 LED_ON:
-	movi r16, 0x3FF 	
+	movi r16, 0x3FF 	#stores all 1's into LEDS memory location
 	movia et, LED
 	stwio r16, 0(et)
-	br RETURN
+	br DELAY
 
 LED_OFF:
-	movi r16, 0x00
+	movi r16, 0x00 		#stores all 0's into LEDS memory location
 	movia et, LED
 	stwio r16, 0(et)
+	br DELAY
+
+DELAY:
+	movia r17, TIMER	#sets the period of the timer to be 100000
+	movui r18, 100000  
+	stwio r18, 8(r17)
+	stwio r0, 12(r17)
+
+	movui r18, 4		#starts the timer without continuing or interrupts
+	stwio r18, 4(r17)
+WAIT:
+	ldwio r18, 0(r17)	#keeps checking clock value until it has timed out
+	andi r18, 0x01
+	beq r18, r0, WAIT
 	br RETURN
 
 RETURN:
-	ldwio r16, 0(sp)	# recovers correct value for r16, return address and stack pointer 
+	ldwio r16, 0(sp)	# recovers correct value for registers, return address and stack pointer 
 	ldwio ra, 4(sp)
-	addi sp, sp, 8	
+	ldwio r17, 8(sp)
+	ldwio r18, 12(sp)
+	addi sp, sp, 16
 
 	addi ea, ea, -4  	
-	eret
+	eret8
