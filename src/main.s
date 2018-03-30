@@ -1,4 +1,7 @@
+.equ LEDS, 0xFF000002
 .global _start
 
+
+
 _start:
-    movia r4, 0xFF000000
+    movia r4, LEDS
