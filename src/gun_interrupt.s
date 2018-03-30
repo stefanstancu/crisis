@@ -12,7 +12,7 @@ _start:
 	movi r16, 0x01 		#enables interrupts on pin 1 (D0)
 	stwio r16, 8(r19)
 
-	movi r16, 0x400		#enables interrupts on IRQ line 11
+	movi r16, 0x800		#enables interrupts on IRQ line 11
 	wrctl ctl3, r16 
 
 	movi r16, 0x01  	# enables global interrupts 
@@ -20,7 +20,6 @@ _start:
 	
 	movia r16, LED		# turns Leds off
 	stwio r0, 0(r16)
-
 	LOOP:
 		br LOOP
 
@@ -30,9 +29,10 @@ my_handler:
 	addi sp, sp, -8		#creates space on stack and saves return address and r16
 	stwio r16, 0(sp)
 	stwio ra, 4(sp)
-						
+				
+	movia r16, 0xFFFFFFFF		
 	movia et, GPIO 		#writes 0 to acknowledge bit for GPIO pins
-	stwio r0, 12(et)
+	stwio r16, 12(et)
 
 
 	movia r16, LED 		#reads data from LEDS
