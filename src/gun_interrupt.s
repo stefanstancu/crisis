@@ -42,12 +42,12 @@ my_handler:
 	stwio r12, 0(et)
 
 	movi r16, 0x00 		#initializes values for the delay loop
-	movia et, 100000000 
+	movia et, 5000000 
 
 
 DELAY:
 	addi r16, r16, 0x01 	#loops until r16 == et then returns
-	ble r16, et, DELAY 	#this loop is to prevent two interrupts coming from same trigger pull
+	ble r16, et, DELAY 	#this l0oop is to prevent two interrupts coming from same trigger pull
 RETURN:
 	movia r16, 0xFFFFFFFF	#writes 0 to acknowledge bit for GPIO pins
 	movia et, GPIO 		
