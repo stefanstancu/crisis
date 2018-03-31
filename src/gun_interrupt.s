@@ -35,7 +35,7 @@ my_handler:
 	stwio r17, 8(sp)
 	stwio r18, 12(sp)
 				
-	addi r12, 0x01 			#increments shots fired counter
+	addi r12, r12, 0x01 			#increments shots fired counter
 
 	movia r16, 0xFFFFFFFF	#writes 0 to acknowledge bit for GPIO pins
 	movia et, GPIO 		
