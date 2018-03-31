@@ -60,7 +60,7 @@ LED_OFF:
 
 DELAY:
 	movia r17, TIMER	#sets the period of the timer to be 100000
-	movui r18, 100000  
+	movia r18, 1000000  
 	stwio r18, 8(r17)
 	stwio r0, 12(r17)
 
@@ -68,7 +68,7 @@ DELAY:
 	stwio r18, 4(r17)
 WAIT:
 	ldwio r18, 0(r17)	#keeps checking clock value until it has timed out
-	andi r18, 0x01
+	andi r18, r18, 0x01
 	beq r18, r0, WAIT
 	br RETURN
 
@@ -80,4 +80,4 @@ RETURN:
 	addi sp, sp, 16
 
 	addi ea, ea, -4  	
-	eret8
+	eret
