@@ -50,15 +50,23 @@ LED_ON:
 	movi r16, 0x3FF 	#stores all 1's into LEDS memory location
 	movia et, LED
 	stwio r16, 0(et)
+	movi r16, 0x00 		#initializes values for the delay loop
+	movia et, 1000000 	
 	br DELAY
 
 LED_OFF:
 	movi r16, 0x00 		#stores all 0's into LEDS memory location
 	movia et, LED
 	stwio r16, 0(et)
+	movi r16, 0x00 		#initializes values for the delay loop
+	movia et, 1000000 	
 	br DELAY
 
 DELAY:
+	addi r16, r16, 0x01 	#loops until r16 == et then returns
+	beq r16, et, RETURN 	#this loop is to prevent two interrupts coming from same trigger pull
+	br DELAY
+/*DELAY:
 	movia r17, TIMER	#sets the period of the timer to be 100000
 	movia r18, 1000000  
 	stwio r18, 8(r17)
@@ -71,7 +79,7 @@ WAIT:
 	andi r18, r18, 0x01
 	beq r18, r0, WAIT
 	br RETURN
-
+*/
 RETURN:
 	ldwio r16, 0(sp)	# recovers correct value for registers, return address and stack pointer 
 	ldwio ra, 4(sp)
