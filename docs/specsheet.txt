@@ -1,0 +1,8 @@
+Zombie Object:
+    base: upper 16 - x position
+          lower 16 - y position
+
+    4   : sprite pointer
+
+    8   : animation controller counter
+    12  : animation speed

@@ -15,14 +15,13 @@
     BACK_FRAME:        # Pointer to the back buffer
         .word 0
 
-    SPRITE:
-        .incbin "../res/charles.bin"
-
 .text
 
 .global _init_graphics
 _init_graphics:
-    
+    addi sp, sp, -4
+    stw ra, 0(sp)
+
     movia r17, VIDEO_CTL_BUFFER     # Set the frames in the controller
 
     movia r16, FRAME_BUFFER_2
@@ -34,31 +33,12 @@ _init_graphics:
 	movia r16, FRAME_BUFFER_1
     stw r16, 4(r17)
 
-    ret
-
-.global _draw
-_draw:
-    addi sp, sp, -4
-    stw ra, 0(sp)
-
-    call waitForBufferWrite
-
-    movia r4, 0x0
-    call FillColour			# Fill screen with a colour
-
-    movia r4, SPRITE
-    movi r5, 40
-    movi r6, 40
-    call DrawImage
-
-    call swapBuffers
-
     ldw ra, 0(sp)
     addi sp, sp, 4
-
     ret
 
 # Polls until the forward buffer has been written
+.global waitForBufferWrite
 waitForBufferWrite:
     movia r17, VIDEO_CTL_BUFFER
     movi r18, 1
@@ -69,6 +49,7 @@ waitForBufferWrite:
     ret
 
 # Swap the buffers and update the BACK_FRAME
+.global swapBuffers
 swapBuffers:
     movia r17, VIDEO_CTL_BUFFER     # Does the buffer swap
     movi r18, 1
@@ -94,8 +75,8 @@ swapBuffers:
 # r4: address
 # r5: width
 # r6: height
-# r7: x position
-# r8: y position
+# r7: x, y position
+.global DrawImage
 DrawImage:
 	subi sp, sp, 28
     stw r16, 0(sp)  # width counter
@@ -137,6 +118,7 @@ DrawImage:
     ret
 
 # r4: colour
+.global FillColour
 FillColour:
 	subi sp, sp, 16
     stw r16, 0(sp)
