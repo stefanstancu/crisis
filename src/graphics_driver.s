@@ -96,11 +96,16 @@ DrawImage:
          2: ldh r18, 0(r19)     # load pixel value and increment
             addi r19, r19, 2
 
+            movia r4, ALPHA_COLOR
+            andi r18, r18, 0x0000FFFF
+            beq r18, r4, skip
+
             mov r4, r16
             mov r5, r17
             mov r6, r18
             call WritePixel		# Draw one pixel
 
+            skip:
             addi r16, r16, -1
             bge r16, r0, 2b     # if row is not over
 
