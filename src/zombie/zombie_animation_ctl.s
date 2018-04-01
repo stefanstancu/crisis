@@ -4,6 +4,8 @@
         .incbin "../../res/zombie_front_1.bin"
     SPRITE_ZOMBIE_2:
         .incbin "../../res/zombie_front_2.bin"
+    SPRITE_ZOMBIE_3:
+        .incbin "../../res/zombie_front_3.bin"
 .text
 
 /* Takes a pointer to a zombie object and set its frame pointer appropriately
@@ -56,17 +58,25 @@ _animate_zombie:
  * r2: the adress of the next zombie frame
 */
 get_next_frame_zombie:
+
     movia r5, SPRITE_ZOMBIE_1
-    beq r4, r5, SET_SPR_2
-    br SET_SPR_1
+    beq r4, r5, SET_SPR_3
+
+    movia r5, SPRITE_ZOMBIE_2
+    beq r4, r5, SET_SPR_3
+
+    movia r5, SPRITE_ZOMBIE_3
+    beq r4, r5, SET_SPR_1
 
     SET_SPR_1:
         movia r2, SPRITE_ZOMBIE_1
-        br NEXT_FRAME_RETURN
+        ret
 
     SET_SPR_2:
         movia r2, SPRITE_ZOMBIE_2
-        br NEXT_FRAME_RETURN
+        ret
 
-    NEXT_FRAME_RETURN:
-    ret  
+    SET_SPR_3:
+        movia r2, SPRITE_ZOMBIE_3
+        ret
+
