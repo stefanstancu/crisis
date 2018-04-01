@@ -51,7 +51,7 @@ my_handler:
 
 	#movia et, LED 			#changes LEDS to value of shots fired
 	#stwio r12, 0(et)
-
+	call _anti_cheat
 	movi r16, 0x00 		#initializes values for the delay loop
 	movia et, 100000000 
 
@@ -59,7 +59,7 @@ my_handler:
 DELAY:
 	addi r16, r16, 0x01 	#loops until r16 == et then returns
 	ble r16, et, DELAY 	#this loop is to prevent two interrupts coming from same trigger pull
-	
+
 HANDLER_RETURN:
 	movia r16, 0xFFFFFFFF	#writes 0 to acknowledge bit for GPIO pins
 	movia et, GPIO 		
