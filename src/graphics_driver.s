@@ -147,8 +147,6 @@ DrawCollisionBox:
     stw r23, 28(sp) # y
     stw ra, 32(sp)
 
-    mov r19, r4                 # init address counter
-
     srli r22, r7, 16            # init x
     andi r23, r7, 0x0000FFFF    # init y
 
@@ -164,7 +162,6 @@ DrawCollisionBox:
             mov r6, r18         #colour value
             call WritePixel     # Draw one pixel
 
-            skip:
             addi r16, r16, -1
             bge r16, r22, 2b     # if row is not over
 
