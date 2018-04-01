@@ -78,18 +78,24 @@ swapBuffers:
 # r7: x, y position
 .global DrawImage
 DrawImage:
-	addi sp, sp, -28
+	addi sp, sp, -36
     stw r16, 0(sp)  # width counter
     stw r17, 4(sp)  # height counter
     stw r18, 8(sp)  # color value
     stw r19, 12(sp) # address value
     stw r20, 16(sp) # width total
     stw r21, 20(sp) # height total
-    stw ra, 24(sp)
+    stw r22, 24(sp) # x
+    stw r23, 28(sp) # y
+    stw ra, 32(sp)
 
     mov r19, r4                 # init address counter
-    mov r20, r5                 # init width
-    mov r21, r6                 # init height
+
+    srli r22, r7, 16            # init x
+    andi r23, r7, 0x0000FFFF    # init y
+
+    add r20, r5, r22                # init width
+    add r21, r6, r23                # init height
 
 	addi r17, r21, -1                 # init height counter
     1:	addi r16, r20, -1             # init width counter
@@ -107,19 +113,21 @@ DrawImage:
 
             skip:
             addi r16, r16, -1
-            bge r16, r0, 2b     # if row is not over
+            bge r16, r22, 2b     # if row is not over
 
         addi r17, r17, -1
-        bge r17, r0, 1b         # if columns not over (i.e. image)
+        bge r17, r23, 1b         # if columns not over (i.e. image)
 
-   	ldw ra, 24(sp)				# Epilogue
+   	ldw ra, 32(sp)				# Epilogue
+    ldw r23, 28(sp)
+    ldw r22, 24(sp)
     ldw r21, 20(sp)
     ldw r20, 16(sp)
     ldw r19, 12(sp)
 	ldw r18, 8(sp)
     ldw r17, 4(sp)
     ldw r16, 0(sp)    
-    addi sp, sp, 28
+    addi sp, sp, 36
     ret
 
 # r4: colour

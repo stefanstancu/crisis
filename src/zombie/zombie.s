@@ -11,7 +11,7 @@ _init_zombies:
 
     movia r17, ZOMBIE
 
-    mov r16, r0
+    movia r16, 0x000A000A
     stw r16, 0(r17)
 
     movia r16, SPRITE_ZOMBIE_1
