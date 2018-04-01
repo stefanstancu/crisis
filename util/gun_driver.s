@@ -9,41 +9,35 @@ _anti_cheat:
     stw r16, 4(sp)
     stw r17, 8(sp)
 
-    call waitForBufferWrite
-
     mov r4, r0 				#Fills the screen black
-    call FillColour 			
-
+    call FillColour
+			
+	call waitForBufferWrite
     call swapBuffers
 
 	movi r16, 0x00 		#initializes values for the delay loop
 	movia r17, 1000000000 
 
-
 DELAY:
 	addi r16, r16, 0x01 	#loops until r16 == r17 then continues
 	ble r16, r17, DELAY 	#this loop is to keep the screen black for a noticeable time
-
 
     movia r16, GPIO1 		# gets data from sensor PIN 2 (D1)
     ldwio r17, 0(r16)
     srli r17, r17, 1
     andi r17, r17, 0x01 			
 
-    beq  r17, r0, CHECK_HITS  	# assuming sensor reads high on target, may have to change later
+    bge  r17, r0, CHECK_HITS  	# assuming sensor reads high on target, may have to change later
     br ANTI_CHEAT_RETURN
 
 CHECK_HITS:
-
-	call waitForBufferWrite
-
     movia r4, WHITE 	#Fills the screen white, test to see that anti cheat works
     call FillColour 			
 
+	call waitForBufferWrite
     call swapBuffers
     movi r16, 0x00 		#initializes values for the delay loop
 	movia r17, 1000000000 
-
 
 DELAY2:
 	addi r16, r16, 0x01 	#loops until r16 == r17 then returns
