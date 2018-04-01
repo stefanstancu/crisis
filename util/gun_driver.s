@@ -19,7 +19,7 @@ _anti_cheat:
     movia r16, GPIO1 		# gets data from sensor PIN 2 (D1)
     ldwio r17, 0(r16)
     srli r17, r17, 1
-    andi r17, 0x01 			
+    andi r17, r17, 0x01 			
 
     beq  r17, r0, CHECK_HITS  	# assuming sensor reads high on target, may have to change later
     br ANTI_CHEAT_RETURN
