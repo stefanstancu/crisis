@@ -97,3 +97,27 @@ _draw_zombie:
     addi sp, sp, 16
 
     ret
+
+.global _draw_zombie_hitbox
+_draw_zombie_hitbox:
+addi sp, sp, -16
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)     # Prologue
+
+    mov r18, r4         # Save the object pointer
+
+    ldw r4, 4(r18)
+    movi r5, 40
+    movi r6, 40
+    ldw r7, 0(r18)
+    call DrawCollisionBox      # Draw the sprite
+
+    ldw ra, 0(sp)       # Epilogue
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)
+    ldw r18, 12(sp)
+    addi sp, sp, 16
+
+    ret
