@@ -36,8 +36,10 @@ _animate_zombie:
         mov r4, r17
         call get_next_frame_zombie
         mov r17, r2                 # Get the next frame
-
         stw r17, 4(r18)             # Set the frame
+
+        movi r16, 1000              # Reset the counter
+        stw r16, 8(r18)
 
     ZOMBIE_ANIMATE_RETURN:
     ldw ra, 0(sp)       # Epilogue
