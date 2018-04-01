@@ -10,6 +10,7 @@
 .equ FRAME_BUFFER_2, 0x02000000
 
 .equ ALPHA_COLOR, 0x0000EA79
+.equ WHITE, 0xFFFFFF
 
 .data
     BACK_FRAME:        # Pointer to the back buffer
@@ -129,6 +130,59 @@ DrawImage:
     ldw r16, 0(sp)    
     addi sp, sp, 36
     ret
+
+# r5: width
+# r6: height
+# r7: x, y position
+.global DrawCollisionBox
+DrawCollisionBox:
+    addi sp, sp, -36
+    stw r16, 0(sp)  # width counter
+    stw r17, 4(sp)  # height counter
+    stw r18, 8(sp)  # color value
+    stw r19, 12(sp) # address value
+    stw r20, 16(sp) # width total
+    stw r21, 20(sp) # height total
+    stw r22, 24(sp) # x
+    stw r23, 28(sp) # y
+    stw ra, 32(sp)
+
+    mov r19, r4                 # init address counter
+
+    srli r22, r7, 16            # init x
+    andi r23, r7, 0x0000FFFF    # init y
+
+    add r20, r5, r22                # init width
+    add r21, r6, r23                # init height
+
+    addi r17, r21, -1                 # init height counter
+    1:  addi r16, r20, -1             # init width counter
+         2: 
+            movia r18, WHITE
+            mov r4, r16
+            mov r5, r17
+            mov r6, r18         #colour value
+            call WritePixel     # Draw one pixel
+
+            skip:
+            addi r16, r16, -1
+            bge r16, r22, 2b     # if row is not over
+
+        addi r17, r17, -1
+        bge r17, r23, 1b         # if columns not over (i.e. image)
+
+    ldw ra, 32(sp)              # Epilogue
+    ldw r23, 28(sp)
+    ldw r22, 24(sp)
+    ldw r21, 20(sp)
+    ldw r20, 16(sp)
+    ldw r19, 12(sp)
+    ldw r18, 8(sp)
+    ldw r17, 4(sp)
+    ldw r16, 0(sp)    
+    addi sp, sp, 36
+    ret
+
 
 # r4: colour
 .global FillColour
