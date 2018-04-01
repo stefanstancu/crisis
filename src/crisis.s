@@ -10,10 +10,36 @@ _start:
     game_loop:
         
         call update
-        call _draw
+        call draw
 
         br game_loop
 
 update:
+    addi sp, sp, -4
+    stw ra, 0(sp)
+
+    movia r4, ZOMBIE
+    call _update_zombie
+
+    ldw ra, 0(sp)
+    addi sp, sp, 4
+    ret
+
+draw:
+    addi sp, sp, -4
+    stw ra, 0(sp)
+
+    call waitForBufferWrite
+
+    movia r4, 0x0
+    call FillColour			# Fill screen with a colour
+
+    movia r4, ZOMBIE
+    call _draw_zombie
+
+    call swapBuffers
+
+    ldw ra, 0(sp)
+    addi sp, sp, 4
 
     ret

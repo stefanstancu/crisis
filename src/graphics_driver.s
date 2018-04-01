@@ -15,14 +15,13 @@
     BACK_FRAME:        # Pointer to the back buffer
         .word 0
 
-    SPRITE:
-        .incbin "../res/charles.bin"
-
 .text
 
 .global _init_graphics
 _init_graphics:
-    
+    addi sp, sp, -4
+    stw ra, 0(sp)
+
     movia r17, VIDEO_CTL_BUFFER     # Set the frames in the controller
 
     movia r16, FRAME_BUFFER_2
@@ -34,31 +33,12 @@ _init_graphics:
 	movia r16, FRAME_BUFFER_1
     stw r16, 4(r17)
 
-    ret
-
-.global _draw
-_draw:
-    addi sp, sp, -4
-    stw ra, 0(sp)
-
-    call waitForBufferWrite
-
-    movia r4, 0x0
-    call FillColour			# Fill screen with a colour
-
-    movia r4, SPRITE
-    movi r5, 40
-    movi r6, 40
-    call DrawImage
-
-    call swapBuffers
-
     ldw ra, 0(sp)
     addi sp, sp, 4
-
     ret
 
 # Polls until the forward buffer has been written
+.global waitForBufferWrite
 waitForBufferWrite:
     movia r17, VIDEO_CTL_BUFFER
     movi r18, 1
@@ -69,6 +49,7 @@ waitForBufferWrite:
     ret
 
 # Swap the buffers and update the BACK_FRAME
+.global swapBuffers
 swapBuffers:
     movia r17, VIDEO_CTL_BUFFER     # Does the buffer swap
     movi r18, 1
@@ -94,10 +75,10 @@ swapBuffers:
 # r4: address
 # r5: width
 # r6: height
-# r7: x position
-# r8: y position
+# r7: x, y position
+.global DrawImage
 DrawImage:
-	subi sp, sp, 28
+	addi sp, sp, -28
     stw r16, 0(sp)  # width counter
     stw r17, 4(sp)  # height counter
     stw r18, 8(sp)  # color value
@@ -115,11 +96,16 @@ DrawImage:
          2: ldh r18, 0(r19)     # load pixel value and increment
             addi r19, r19, 2
 
+            movia r4, ALPHA_COLOR
+            andi r18, r18, 0x0000FFFF
+            beq r18, r4, skip
+
             mov r4, r16
             mov r5, r17
             mov r6, r18
             call WritePixel		# Draw one pixel
 
+            skip:
             addi r16, r16, -1
             bge r16, r0, 2b     # if row is not over
 
@@ -133,10 +119,11 @@ DrawImage:
 	ldw r18, 8(sp)
     ldw r17, 4(sp)
     ldw r16, 0(sp)    
-    addi sp, sp, 20
+    addi sp, sp, 28
     ret
 
 # r4: colour
+.global FillColour
 FillColour:
 	subi sp, sp, 16
     stw r16, 0(sp)
