@@ -33,21 +33,33 @@ _start:
     call waitForBufferWrite
 
 	movia r16, FRAME_BUFFER_1
-    stw r16, 4(r17)
-	
+    stw r16, 4(r17)                 # End init
+
     LOOP:
-        movia r4, 0x0
-        call FillColour			# Fill screen with a colour
-
-        movia r4, SPRITE
-        movi r5, 40
-        movi r6, 40
-        call DrawImage
-
-        call swapBuffers
-        call waitForBufferWrite
-
+        call _draw
         br LOOP
+
+.global _draw
+_draw:
+    addi sp, sp, -4
+    stw ra, 0(sp)
+
+    call waitForBufferWrite
+
+    movia r4, 0x0
+    call FillColour			# Fill screen with a colour
+
+    movia r4, SPRITE
+    movi r5, 40
+    movi r6, 40
+    call DrawImage
+
+    call swapBuffers
+
+    ldw ra, 0(sp)
+    addi sp, sp, 4
+
+    ret
 
 # Polls until the forward buffer has been written
 waitForBufferWrite:
