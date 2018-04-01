@@ -3,21 +3,18 @@
 .equ LOG2_BYTES_PER_ROW, 10
 .equ LOG2_BYTES_PER_PIXEL, 1
 
-# 160x120, 256 bytes/row, 1 byte per pixel: DE10-Lite
-#.equ WIDTH, 160
-#.equ HEIGHT, 120
-#.equ LOG2_BYTES_PER_ROW, 8
-#.equ LOG2_BYTES_PER_PIXEL, 0
-# 128 bytes/row, 1 byte per pixel: DE0
-#.equ WIDTH, 80
-#.equ HEIGHT, 60
-#.equ LOG2_BYTES_PER_ROW, 7
-#.equ LOG2_BYTES_PER_PIXEL, 0
+.equ VIDEO_CTL_BUFFER, 0xFF203020
+.equ CHARBUF, 0x09000000	        # Character buffer. Same on all boards.
 
-.equ PIXBUF, 0x08000000		# Pixel buffer. Same on all boards.
-.equ CHARBUF, 0x09000000	# Character buffer. Same on all boards.
+.equ FRAME_BUFFER_1, 0x01000000
+.equ FRAME_BUFFER_2, 0x02000000
+
+.equ ALPHA_COLOR, 0x0000EA79
 
 .data
+    BACK_FRAME:        # Pointer to the back buffer
+        .word 0
+
     SPRITE:
         .incbin "../res/charles.bin"
 
@@ -26,6 +23,17 @@
 .global _start
 _start:
 	movia sp, 0x800000		# Initial stack pointer
+    
+    movia r17, VIDEO_CTL_BUFFER     # Set the frames in the controller
+
+    movia r16, FRAME_BUFFER_2
+    stw r16, 4(r17)
+
+    call swapBuffers
+    call waitForBufferWrite
+
+	movia r16, FRAME_BUFFER_1
+    stw r16, 4(r17)
 	
     LOOP:
         movia r4, 0x0
@@ -36,9 +44,44 @@ _start:
         movi r6, 40
         call DrawImage
 
-        br LOOP
-    # end LOOP
+        call swapBuffers
+        call waitForBufferWrite
 
+        br LOOP
+
+# Polls until the forward buffer has been written
+waitForBufferWrite:
+    movia r17, VIDEO_CTL_BUFFER
+    movi r18, 1
+    wait:
+        ldwio r16, 12(r17)
+        andi r16, r16, 1
+        beq r16, r18, wait
+    ret
+
+# Swap the buffers and update the BACK_FRAME
+swapBuffers:
+    movia r17, VIDEO_CTL_BUFFER     # Does the buffer swap
+    movi r18, 1
+    stwio r18, 0(r17)
+
+    movia r17, FRAME_BUFFER_1
+    movia r18, BACK_FRAME
+    ldwio r16, 0(r18)
+    beq r16, r17, SET_FRAME_2
+
+    SET_FRAME_1:
+        stw r17, 0(r18)
+        br SWAP_RETURN
+
+    SET_FRAME_2:
+        movia r17, FRAME_BUFFER_2
+        stw r17, 0(r18)
+        br SWAP_RETURN
+        
+    SWAP_RETURN:
+        ret
+    
 # r4: address
 # r5: width
 # r6: height
@@ -133,7 +176,10 @@ WritePixel:
     sll r5, r5, r2
     sll r4, r4, r3
     add r5, r5, r4
-    movia r4, PIXBUF
+
+    movia r7, BACK_FRAME
+    ldwio r4, 0(r7)
+
     add r5, r5, r4
     
     bne r3, r0, 1f					# 8bpp or 16bpp?
