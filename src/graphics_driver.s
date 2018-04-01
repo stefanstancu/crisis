@@ -20,9 +20,8 @@
 
 .text
 
-.global _start
-_start:
-	movia sp, 0x800000		# Initial stack pointer
+.global _init_graphics
+_init_graphics:
     
     movia r17, VIDEO_CTL_BUFFER     # Set the frames in the controller
 
@@ -33,11 +32,9 @@ _start:
     call waitForBufferWrite
 
 	movia r16, FRAME_BUFFER_1
-    stw r16, 4(r17)                 # End init
+    stw r16, 4(r17)
 
-    LOOP:
-        call _draw
-        br LOOP
+    ret
 
 .global _draw
 _draw:
