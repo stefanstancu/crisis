@@ -1,7 +1,7 @@
 .data
 	.global ZOMBIE
     ZOMBIE:
-        .skip 16
+        .skip 24
 
 .text
 /* Initializes the zombies*/
@@ -20,8 +20,12 @@ _init_zombies:
     movia r16, 1000
     stw r16, 8(r17)
 
+    stw r16, 16(r17)
+
     movia r16, 400
     stw r16, 12(r17)
+
+    stw r16, 20(r17)
 
     ret
 
@@ -41,6 +45,27 @@ _update_zombie:
     mov r4, r18
     call _animate_zombie    # Update the animation
 
+    ldw r16, 16(r18)
+    ble r16, r0, move_z
+    br inc_move_counter
+
+    move_z:
+        movi r16, 1000      # reset counter
+        stw r16, 16(r18)
+
+        ldw r16, 0(r18)     # Does the move
+        addi r16, r16, 0
+        stw r16, 0(r18)
+        br UPDATE_ZOMBIE_RETURN
+
+    inc_move_counter:
+        ldw r17, 20(r18)    # increments the counter
+        sub r16, r16, r17
+        stw r16, 16(r18)
+        br UPDATE_ZOMBIE_RETURN
+        
+
+    UPDATE_ZOMBIE_RETURN:
     ldw ra, 0(sp)       # Epilogue
     ldw r16, 4(sp)
     ldw r17, 8(sp)
