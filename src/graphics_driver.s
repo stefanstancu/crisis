@@ -10,6 +10,7 @@
 .equ FRAME_BUFFER_2, 0x02000000
 
 .equ ALPHA_COLOR, 0x0000EA79
+.global WHITE
 .equ WHITE, 0xFFFFFF
 
 .data
