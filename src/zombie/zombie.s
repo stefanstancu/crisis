@@ -88,7 +88,7 @@ _draw_zombie:
     movi r5, 40
     movi r6, 40
     ldw r7, 0(r18)
-    call DrawCollisionBox      # Draw the sprite
+    call DrawImage      # Draw the sprite
 
     ldw ra, 0(sp)       # Epilogue
     ldw r16, 4(sp)
