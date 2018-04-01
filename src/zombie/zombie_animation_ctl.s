@@ -1,7 +1,9 @@
 .data
-	.global SPRITE_ZOMBIE_1
+    .global SPRITE_ZOMBIE_1
     SPRITE_ZOMBIE_1:
-        .incbin "../../res/charles.bin"
+        .incbin "../../res/zombie_front_1.bin"
+    SPRITE_ZOMBIE_2:
+        .incbin "../../res/zombie_front_2.bin"
 .text
 
 /* Takes a pointer to a zombie object and set its frame pointer appropriately
@@ -35,7 +37,7 @@ _animate_zombie:
         call get_next_frame_zombie
         mov r17, r2                 # Get the next frame
 
-        stw r16, 4(r18)             # Set the frame
+        stw r17, 4(r18)             # Set the frame
 
     ZOMBIE_ANIMATE_RETURN:
     ldw ra, 0(sp)       # Epilogue
@@ -52,5 +54,17 @@ _animate_zombie:
  * r2: the adress of the next zombie frame
 */
 get_next_frame_zombie:
-    mov r2, r4          # Temp behaviour while testing
+    movia r5, SPRITE_ZOMBIE_1
+    beq r4, r5, SET_SPR_2
+    br SET_SPR_1
+
+    SET_SPR_1:
+        movia r2, SPRITE_ZOMBIE_1
+        br NEXT_FRAME_RETURN
+
+    SET_SPR_2:
+        movia r2, SPRITE_ZOMBIE_2
+        br NEXT_FRAME_RETURN
+
+    NEXT_FRAME_RETURN:
     ret  

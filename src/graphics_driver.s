@@ -78,7 +78,7 @@ swapBuffers:
 # r7: x, y position
 .global DrawImage
 DrawImage:
-	subi sp, sp, 28
+	addi sp, sp, -28
     stw r16, 0(sp)  # width counter
     stw r17, 4(sp)  # height counter
     stw r18, 8(sp)  # color value
@@ -114,7 +114,7 @@ DrawImage:
 	ldw r18, 8(sp)
     ldw r17, 4(sp)
     ldw r16, 0(sp)    
-    addi sp, sp, 20
+    addi sp, sp, 28
     ret
 
 # r4: colour

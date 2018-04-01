@@ -20,7 +20,7 @@ _init_zombies:
     movia r16, 1000
     stw r16, 8(r17)
 
-    movia r6, 10
+    movia r16, 10
     stw r16, 12(r17)
 
     ret
