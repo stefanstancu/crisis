@@ -23,7 +23,7 @@ _init_interrupts:
 	movi r16, 0x01 		#enables interrupts on pin 1 (D0)
 	stwio r16, 8(r19)
 
-	movi r16, 0x800		#enables interrupts on IRQ line 11
+	movi r16, 0x801		#enables interrupts on IRQ line 11
 	wrctl ctl3, r16 
 
 	movi r16, 0x01  	# enables global interrupts 
