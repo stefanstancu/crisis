@@ -4,10 +4,11 @@
 #checks to make sure gun is pointing at screen when trigger is pulled
 .global _anti_cheat
 _anti_cheat: 
-	addi sp, sp, -12			#prologue  
+	addi sp, sp, -16			#prologue  
     stw ra, 0(sp)
     stw r16, 4(sp)
     stw r17, 8(sp)
+    stw r4, 12(sp)
 
     mov r4, r0 				#Fills the screen black
     call FillColour
@@ -47,8 +48,9 @@ DELAY2:
 ANTI_CHEAT_RETURN:
     ldw ra, 0(sp)			#Epilogue
     ldw r16, 4(sp)
-    ldw r17, 8(sp)			
-    addi sp, sp, 12
+    ldw r17, 8(sp)	
+    ldw r4, 12(sp)		
+    addi sp, sp, 16
     ret
 
 #checks to see if gun is pointed at zombie when trigger is pulled
