@@ -1,6 +1,5 @@
 .global _init
 _init:
-	movia sp, 0x800000		# Initial stack pointer
     addi sp, sp, -4
     stw ra, 0(sp)
 

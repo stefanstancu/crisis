@@ -1,4 +1,4 @@
-.equ GPIO1, 0xFF200060
+.equ GPIO1, 0xFF200070
 .equ LEDS, 0xFF200000
 
 #checks to make sure gun is pointing at screen when trigger is pulled
@@ -12,8 +12,8 @@ _anti_cheat:
 
     mov r4, r0 				#Fills the screen black
     call FillColour		
-	call waitForBufferWrite
     call swapBuffers
+	call waitForBufferWrite
 
     movia r16, GPIO1 		# gets data from sensor PIN 2 (D1)
     ldwio r17, 0(r16)
@@ -47,8 +47,8 @@ _check_zombie_hits:
     call FillColour     
     movia r4, ZOMBIE            #draws zombie hitbox on black screen
     call _draw_zombie_hitbox 
-    call waitForBufferWrite
     call swapBuffers
+	call waitForBufferWrite
 
 CHECK_ZOMBIE_HITS_RETURN:
 	ldw ra, 0(sp)			#Epilogue

@@ -5,6 +5,7 @@
 
 .global _start
 _start:
+	movia sp, 0x04000000	# Initial stack pointer
     call _init
 
     game_loop:

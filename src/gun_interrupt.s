@@ -1,7 +1,7 @@
-.equ GPIO, 0xFF200060
+.equ GPIO, 0xFF200070
 .equ LED, 0xFF200000
 .equ TIMER, 0xFF202000 
-.equ TIGGER_DELAY, 50000000 
+.equ TRIGGER_DELAY, 25000000
 
 # PIN 1 (D0) is trigger data
 # PIN 2 (D1) is sensor data
@@ -23,16 +23,16 @@ _init_interrupts:
 	movi r16, 0x01 		#enables interrupts on pin 1 (D0)
 	stwio r16, 8(r19)
 
-	movi r16, 0x801		#enables interrupts on IRQ line 11
+	movi r16, (1<<12) | (1)		#enables interrupts on IRQ line 12
 	wrctl ctl3, r16 
 
 	movi r16, 0x01  	# enables global interrupts 
 	wrctl ctl0, r16				
 
 	movia r19, TIMER
-	movia r16, %lo(TIGGER_DELAY)
+	movi r16, %lo(TRIGGER_DELAY)
 	stwio r16, 8(r19)
-	movia r16, %hi(TIGGER_DELAY)
+	movi r16, %hi(TRIGGER_DELAY)
 	stwio r16, 12(r19)
 
 	ldw ra, 0(sp)
@@ -52,27 +52,38 @@ my_handler:
 	rdctl r16, ctl4		#check which device caused interrupt
 	andi r17, r16, 0x01
 	bgt r17, r0, TRIGGER_RESET
-	andi r17, r16, 0x800
+	andi r17, r16, (1<<12)
 	bgt r17, r0, TRIGGER_PULL
 
 TRIGGER_PULL:
+	rdctl r16, ctl3
+	movia r17, ~(1<<12) 
+	and r16, r16, r17
+	wrctl ctl3, r16			# mask the IRQ Line 12 (off)
+
+	call _anti_cheat
+
 	movia r17, TIMER 		#starts timer 
 	movi r16, 0x05
 	stwio r16, 4(r17)
 
-	call _anti_cheat
-	movia r16, 0xFFFFFFFF	#writes 0 to acknowledge bit for GPIO pins
-	movia et, GPIO 		
-	stwio r16, 12(et)
 	br HANDLER_RETURN	
 
 TRIGGER_RESET:
-	rdctl r16, ctl3 		#enables trigger interrupts after timer goes off
-	ori r16, r16, 0x800
-	wrctl r16, ctl3
-
 	movia r17, TIMER 		#acknowledges timer interrupt
 	stwio r0, 0(r17)
+
+	movia r16, 0xFFFFFFFF	#writes 0 to acknowledge bit for GPIO pins
+	movia et, GPIO 		
+	stwio r16, 12(et)
+	
+	rdctl r16, ctl3 		#enables trigger interrupts after timer goes off
+	ori r16, r16, (1<<12)
+	wrctl ctl3, r16
+	
+	movi r16, 0x08			# Stop the timer
+	stwio r16, 4(r17)
+
 	br HANDLER_RETURN
 	
 HANDLER_RETURN:
