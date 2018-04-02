@@ -73,7 +73,9 @@ _update_zombie:
     addi sp, sp, 16
 
     ret
-
+/* Draws a given zombie
+ * r4: zombie object pointer
+*/
 .global _draw_zombie
 _draw_zombie:
     addi sp, sp, -16
@@ -97,7 +99,9 @@ _draw_zombie:
     addi sp, sp, 16
 
     ret
-
+/* Draws a given zombie hitbox
+ * r4: zombie object pointer
+*/
 .global _draw_zombie_hitbox
 _draw_zombie_hitbox:
 addi sp, sp, -16

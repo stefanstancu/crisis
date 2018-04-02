@@ -24,11 +24,7 @@ _anti_cheat:
     br ANTI_CHEAT_RETURN
 
 CHECK_HITS:
-    movia r4, WHITE 	#Fills the screen white, test to see that anti cheat works
-    call FillColour 			
-	call waitForBufferWrite
-    call swapBuffers
-	#call _check_zombie_hits
+	call _check_zombie_hits
 
 ANTI_CHEAT_RETURN:
     ldw ra, 0(sp)			#Epilogue
@@ -41,15 +37,21 @@ ANTI_CHEAT_RETURN:
 #checks to see if gun is pointed at zombie when trigger is pulled
     .global _check_zombie_hits
 _check_zombie_hits:
-	addi sp, sp, -12			#prologue  
+	addi sp, sp, -16			#prologue  
     stw ra, 0(sp)
     stw r16, 4(sp)
     stw r17, 8(sp)
+    stw r4, 12(sp)
 
+    movia r4, ZOMBIE
+    call _draw_zombie_hitbox 
+    call waitForBufferWrite
+    call swapBuffers
 
 CHECK_ZOMBIE_HITS_RETURN:
 	ldw ra, 0(sp)			#Epilogue
     ldw r16, 4(sp)
-    ldw r17, 8(sp)			
-    addi sp, sp, 12
+    ldw r17, 8(sp)	
+    ldw r4, 12(sp)		
+    addi sp, sp, 16
     ret
