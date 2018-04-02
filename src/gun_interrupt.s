@@ -1,6 +1,7 @@
 .equ GPIO, 0xFF200060
 .equ LED, 0xFF200000
 .equ TIMER, 0xFF202000 
+.equ TIGGER_DELAY, 50000000 
 
 # PIN 1 (D0) is trigger data
 # PIN 2 (D1) is sensor data
@@ -27,12 +28,13 @@ _init_interrupts:
 
 	movi r16, 0x01  	# enables global interrupts 
 	wrctl ctl0, r16				
-	
-	movia r16, LED		# turns Leds off
-	stwio r0, 0(r16)
 
-	#LOOP:
-	#	br LOOP
+	movia r19, TIMER
+	movia r16, %lo(TIGGER_DELAY)
+	stwio r16, 8(r19)
+	movia r16, %hi(TIGGER_DELAY)
+	stwio r16, 12(r19)
+
 	ldw ra, 0(sp)
 	ldw r16, 4(sp)
 	ldw r19, 8(sp)
@@ -47,24 +49,33 @@ my_handler:
 	stwio r17, 8(sp)
 	stwio r18, 12(sp)
 				
-	#addi r12, r12, 0x01 	#increments shots fired counter
+	rdctl r16, ctl4		#check which device caused interrupt
+	andi r17, r16, 0x01
+	bgt r17, r0, TRIGGER_RESET
+	andi r17, r16, 0x800
+	bgt r17, r0, TRIGGER_PULL
 
-	#movia et, LED 			#changes LEDS to value of shots fired
-	#stwio r12, 0(et)
+TRIGGER_PULL:
+	movia r17, TIMER 		#starts timer 
+	movi r16, 0x05
+	stwio r16, 4(r17)
+
 	call _anti_cheat
-	movi r16, 0x00 		#initializes values for the delay loop
-	movia et, 50000000 
-
-
-DELAY:
-	addi r16, r16, 0x01 	#loops until r16 == et then returns
-	ble r16, et, DELAY 	#this loop is to prevent two interrupts coming from same trigger pull
-
-HANDLER_RETURN:
 	movia r16, 0xFFFFFFFF	#writes 0 to acknowledge bit for GPIO pins
 	movia et, GPIO 		
 	stwio r16, 12(et)
+	br HANDLER_RETURN	
 
+TRIGGER_RESET:
+	rdctl r16, ctl3 		#enables trigger interrupts after timer goes off
+	ori r16, r16, 0x800
+	wrctl r16, ctl3
+
+	movia r17, TIMER 		#acknowledges timer interrupt
+	stwio r0, 0(r17)
+	br HANDLER_RETURN
+	
+HANDLER_RETURN:
 	ldwio r16, 0(sp)	# recovers correct value for registers, return address and stack pointer 
 	ldwio ra, 4(sp)
 	ldwio r17, 8(sp)
