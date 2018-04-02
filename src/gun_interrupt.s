@@ -53,7 +53,7 @@ my_handler:
 	#stwio r12, 0(et)
 	call _anti_cheat
 	movi r16, 0x00 		#initializes values for the delay loop
-	movia et, 75000000 
+	movia et, 50000000 
 
 
 DELAY:

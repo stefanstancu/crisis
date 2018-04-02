@@ -20,7 +20,7 @@ _anti_cheat:
     srli r17, r17, 1
     andi r17, r17, 0x01 			
 
-    bge  r17, r0, CHECK_HITS  	# assuming sensor reads high on target, may have to change later
+    bgt r17, r0, CHECK_HITS  	# assuming sensor reads high on target, may have to change later
     br ANTI_CHEAT_RETURN
 
 CHECK_HITS:
