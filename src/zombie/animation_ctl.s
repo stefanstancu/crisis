@@ -1,11 +1,11 @@
 .data
     .global SPRITE_ZOMBIE_1
     SPRITE_ZOMBIE_1:
-        .incbin "../../res/zombie_front_1.bin"
+        .incbin "../../res/zombie/zombie_front_1.bin"
     SPRITE_ZOMBIE_2:
-        .incbin "../../res/zombie_front_2.bin"
+        .incbin "../../res/zombie/zombie_front_2.bin"
     SPRITE_ZOMBIE_3:
-        .incbin "../../res/zombie_front_3.bin"
+        .incbin "../../res/zombie/zombie_front_3.bin"
 .text
 
 /* Takes a pointer to a zombie object and set its frame pointer appropriately
@@ -24,7 +24,8 @@ _animate_zombie:
 
     # Check the counter
     ldw r16, 8(r18)
-    blt r16, r0, DO_ANIMATE
+    blt r16, r0, DO_ANIMATE         # If the counter is zero, do the animation
+    br INC_COUNTER
 
     INC_COUNTER:
         ldw r17, 12(r18)
