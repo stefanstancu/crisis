@@ -1,12 +1,56 @@
 .data
-    .global SPRITE_ZOMBIE_1
-    SPRITE_ZOMBIE_1:
+    .global SPRITE_ZOMBIE_WALK_1
+    SPRITE_ZOMBIE_WALK_1:
         .incbin "../../res/zombie/zombie_front_1.bin"
-    SPRITE_ZOMBIE_2:
+    SPRITE_ZOMBIE_WALK_2:
         .incbin "../../res/zombie/zombie_front_2.bin"
-    SPRITE_ZOMBIE_3:
+    SPRITE_ZOMBIE_WALK_3:
         .incbin "../../res/zombie/zombie_front_3.bin"
+    SPRITE_ZOMBIE_WALK_4:
+        .incbin "../../res/zombie/zombie_front_4.bin"
+
+    .global ZOMBIE_WALK_AS
+    ZOMBIE_WALK_AS:
+        .skip 20
 .text
+
+/* Inits the zombie animations by placing the correct addresses into the animation sequence
+ */
+.global _init_zombie_animations
+_init_zombie_animations:
+    addi sp, sp, -16
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)     # Prologue
+
+    movia r17, ZOMBIE_WALK_AS
+
+    movia r16, SPRITE_ZOMBIE_WALK_1
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    movia r16, SPRITE_ZOMBIE_WALK_2
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    movia r16, SPRITE_ZOMBIE_WALK_3
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    movia r16, SPRITE_ZOMBIE_WALK_4
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    stw r0, 0(r17)                  # Terminate AS with a 0
+
+    ldw ra, 0(sp)                    # Epilogue
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)
+    ldw r18, 12(sp)
+    addi sp, sp, 16
+
+    ret
 
 /* Takes a pointer to a zombie object and set its frame pointer appropriately
  * See specsheet for zombie object definition
@@ -34,12 +78,8 @@ _animate_zombie:
         br ZOMBIE_ANIMATE_RETURN
 
     DO_ANIMATE:
-        ldw r17, 4(r18)             # Load frame
-        
-        mov r4, r17
-        call get_next_frame_zombie
-        mov r17, r2                 # Get the next frame
-        stw r17, 4(r18)             # Set the frame
+        mov r4, r18                 # Pass object as parameter
+        call set_next_frame_zombie
 
         movi r16, 1000              # Reset the counter
         stw r16, 8(r18)
@@ -53,31 +93,43 @@ _animate_zombie:
 
     ret
 
-/* Gets the next frame in the animation
- * r4: the address of the current zombie frame
+/* Sets the next frame in the animation
+ * r4: the address of the current object
  * 
- * r2: the adress of the next zombie frame
 */
-get_next_frame_zombie:
+set_next_frame_zombie:
+    addi sp, sp, -16
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)     # Prologue
 
-    movia r5, SPRITE_ZOMBIE_1
-    beq r4, r5, SET_SPR_3
+    ldw r16, 28(r4)                 # Load the animation sequence pointer
+    ldw r17, 4(r16)                 # Load the next frame pointer in the sequence
+    beq r17, r0, RESET_ANIMATION    # If next frame is zero
+    br NEXT_FRAME
 
-    movia r5, SPRITE_ZOMBIE_2
-    beq r4, r5, SET_SPR_3
+    NEXT_FRAME:
+        addi r16, r16, 4
+        stw r16, 28(r4)             # Increment the animation sequence pointer
 
-    movia r5, SPRITE_ZOMBIE_3
-    beq r4, r5, SET_SPR_1
+        stw r17, 4(r4)              # Store the sprite pointer in the object       
+        br NEXT_FRAME_RETURN
 
-    SET_SPR_1:
-        movia r2, SPRITE_ZOMBIE_1
-        ret
+    RESET_ANIMATION:
+        ldw r16, 24(r4)             # Set the frame
+        stw r16, 28(r4)
 
-    SET_SPR_2:
-        movia r2, SPRITE_ZOMBIE_2
-        ret
+        ldw r17, 0(r16)
+        stw r17, 4(r4)              # Reset the animation sequence pointer to the start of animation
+        br NEXT_FRAME_RETURN
 
-    SET_SPR_3:
-        movia r2, SPRITE_ZOMBIE_3
-        ret
+    NEXT_FRAME_RETURN:
+    ldw ra, 0(sp)       # Epilogue
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)
+    ldw r18, 12(sp)
+    addi sp, sp, 16
+
+    ret
 

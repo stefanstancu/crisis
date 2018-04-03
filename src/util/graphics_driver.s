@@ -100,7 +100,7 @@ DrawImage:
     add r21, r6, r23                # init height
 
 	addi r17, r21, -1                 # init height counter
-    1:	addi r16, r20, -1             # init width counter
+    1:	mov r16, r20             # init width counter
          2: ldh r18, 0(r19)     # load pixel value and increment
             addi r19, r19, 2
 

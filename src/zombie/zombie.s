@@ -1,20 +1,23 @@
 .data
 	.global ZOMBIE
     ZOMBIE:
-        .skip 24
+        .skip 32
 
 .text
 /* Initializes the zombies*/
 .global _init_zombies
 _init_zombies:
-    # Inits one zombie for testing
+    addi sp, sp, -4
+    stw ra, 0(sp)
+
+    call _init_zombie_animations
 
     movia r17, ZOMBIE
 
     movia r16, 0x000A000A
     stw r16, 0(r17)
 
-    movia r16, SPRITE_ZOMBIE_1
+    movia r16, SPRITE_ZOMBIE_WALK_1
     stw r16, 4(r17)
 
     movia r16, 1000
@@ -27,6 +30,12 @@ _init_zombies:
 
     stw r16, 20(r17)
 
+    movia r16, ZOMBIE_WALK_AS
+    stw r16, 24(r17)
+    stw r16, 28(r17)
+
+    ldw ra, 0(sp)
+    addi sp, sp, 4
     ret
 
 /* Updates a given zombie
@@ -87,8 +96,8 @@ _draw_zombie:
     mov r18, r4         # Save the object pointer
 
     ldw r4, 4(r18)
-    movi r5, 40
-    movi r6, 40
+    movi r5, 55
+    movi r6, 60
     ldw r7, 0(r18)
     call DrawImage      # Draw the sprite
 
