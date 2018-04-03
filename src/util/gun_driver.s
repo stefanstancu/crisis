@@ -35,7 +35,7 @@ ANTI_CHEAT_RETURN:
     ret
 
 #checks to see if gun is pointed at zombie when trigger is pulled
-    .global _check_zombie_hits
+.global _check_zombie_hits
 _check_zombie_hits:
 	addi sp, sp, -16			#prologue  
     stw ra, 0(sp)
@@ -45,8 +45,10 @@ _check_zombie_hits:
 
     mov r4, r0              #Fills the screen black
     call FillColour     
+
     movia r4, ZOMBIE            #draws zombie hitbox on black screen
     call _draw_zombie_hitbox 
+
     call swapBuffers
 	call waitForBufferWrite
 

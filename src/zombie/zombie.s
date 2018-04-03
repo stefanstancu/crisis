@@ -25,7 +25,7 @@ _init_zombies:
 
     stw r16, 16(r17)
 
-    movia r16, 400
+    movia r16, 600
     stw r16, 12(r17)
 
     stw r16, 20(r17)
@@ -122,8 +122,8 @@ addi sp, sp, -16
     mov r18, r4         # Save the object pointer
 
     ldw r4, 4(r18)
-    movi r5, 40
-    movi r6, 40
+    movi r5, 20
+    movi r6, 60
     ldw r7, 0(r18)
     call DrawCollisionBox      # Draw the sprite
 

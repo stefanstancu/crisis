@@ -9,9 +9,30 @@
     SPRITE_ZOMBIE_WALK_4:
         .incbin "../../res/zombie/zombie_front_4.bin"
 
+    SPRITE_ZOMBIE_DIE_1:
+        .incbin "../../res/zombie/zombie_die_1.bin"
+    SPRITE_ZOMBIE_DIE_2:
+        .incbin "../../res/zombie/zombie_die_2.bin"
+    SPRITE_ZOMBIE_DIE_3:
+        .incbin "../../res/zombie/zombie_die_3.bin"
+    SPRITE_ZOMBIE_DIE_4:
+        .incbin "../../res/zombie/zombie_die_4.bin"
+    SPRITE_ZOMBIE_DIE_5:
+        .incbin "../../res/zombie/zombie_die_5.bin"
+    SPRITE_ZOMBIE_DIE_6:
+        .incbin "../../res/zombie/zombie_die_6.bin"
+    SPRITE_ZOMBIE_DIE_7:
+        .incbin "../../res/zombie/zombie_die_7.bin"
+    SPRITE_ZOMBIE_DIE_8:
+        .incbin "../../res/zombie/zombie_die_8.bin"
+
     .global ZOMBIE_WALK_AS
     ZOMBIE_WALK_AS:
         .skip 20
+
+    .global ZOMBIE_DIE_AS
+    ZOMBIE_DIE_AS:
+        .skip 36
 .text
 
 /* Inits the zombie animations by placing the correct addresses into the animation sequence
@@ -39,6 +60,43 @@ _init_zombie_animations:
     addi r17, r17, 4
 
     movia r16, SPRITE_ZOMBIE_WALK_4
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    stw r0, 0(r17)                  # Terminate AS with a 0
+
+    .global ZOMBIE_DIE_AS
+    movia r17, ZOMBIE_DIE_AS
+
+    movia r16, SPRITE_ZOMBIE_DIE_1
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    movia r16, SPRITE_ZOMBIE_DIE_2
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    movia r16, SPRITE_ZOMBIE_DIE_3
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    movia r16, SPRITE_ZOMBIE_DIE_4
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    movia r16, SPRITE_ZOMBIE_DIE_5
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    movia r16, SPRITE_ZOMBIE_DIE_6
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    movia r16, SPRITE_ZOMBIE_DIE_7
+    stw r16, 0(r17)
+    addi r17, r17, 4
+
+    movia r16, SPRITE_ZOMBIE_DIE_8
     stw r16, 0(r17)
     addi r17, r17, 4
 
