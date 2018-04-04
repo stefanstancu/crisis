@@ -1,0 +1,35 @@
+Enitity Controller
+
+A controller that provides functions with which to create, update and draw multiple entity objects. Each type of entity will have its controller.
+
+Entities lists will be stored as a sequence of pointers to the objects.
+Entity locations must be pre-declared. If you save space for 10 entity entries in the list,
+there should be 10 x sizeof(entity) bytes saved for the entities.
+
+Each function can be a loop to iterate through these items and call the appropriate function.
+
+Ex. drawing zombies
+draw_zombies(){
+    for (zombie in zombies){
+        if (zombie.alive){
+            draw_zombie(zombie);
+        }
+    }
+}
+
+The entity table looks like this. On the left is the entity table and an example
+object on the right.
+
+|    Entry     | Object Pointer |
+---------------------------------
+|      0       |   0x0000AAAA   |  ->  |    Base     |      xy     |
+|      1       |   0x0000AABB   |      |     +4      |    sprite   |
+|      2       |   0x0000AACC   |      |     +8      |    counter  |
+|      3       |   0x0000AFFF   |
+|     N/A      |   0x00000000   |  <-  list is zero terminated to indicated end
+
+Checking if alive: Each address should be dereferenced to check the flag on the object
+Creation: if dead, a new entity can be created at this address.
+Deletion: set the appropriate flag.
+
+*NOTE* The object pointer should never change, this is pre-allocated space.
