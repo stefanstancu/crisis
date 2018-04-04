@@ -122,9 +122,11 @@ addi sp, sp, -16
     mov r18, r4         # Save the object pointer
 
     ldw r4, 4(r18)
-    movi r5, 20
+    movi r5, 30
     movi r6, 60
     ldw r7, 0(r18)
+    movia r16, (12<<16)
+    add r7, r7, r16       # Offset the x by 12
     call DrawCollisionBox      # Draw the sprite
 
     ldw ra, 0(sp)       # Epilogue
