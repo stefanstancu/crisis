@@ -71,11 +71,12 @@ _make_zombie:
 */
 .global _update_zombie
 _update_zombie:
-    addi sp, sp, -16
+    addi sp, sp, -20
     stw ra, 0(sp)
     stw r16, 4(sp)
     stw r17, 8(sp)
-    stw r18, 12(sp)     # Prologue
+    stw r18, 12(sp)
+    stw r19, 16(sp)     # Prologue
 
     mov r18, r4            # Save the zombie object pointer
 
@@ -119,8 +120,8 @@ _update_zombie:
     ldw r16, 4(sp)
     ldw r17, 8(sp)
     ldw r18, 12(sp)
-    addi sp, sp, 16
-
+    ldw r19, 16(sp)
+    addi sp, sp, 20
     ret
 /* Draws a given zombie
  * r4: zombie object pointer
