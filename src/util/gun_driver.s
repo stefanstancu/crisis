@@ -13,6 +13,7 @@ _anti_cheat:
 
     mov r4, r0 				#Fills the screen black
     call FillColour		
+
     call swapBuffers
 	call waitForBufferWrite
 

@@ -44,7 +44,7 @@ _init_interrupts:
 
 .section .exceptions, "ax"
 my_handler:
-	addi sp, sp, -28		#creates space on stack and saves return address and registers
+	addi sp, sp, -32		#creates space on stack and saves return address and registers
 	stw r16, 0(sp)
 	stw ra, 4(sp)
 	stw r17, 8(sp)
@@ -52,6 +52,7 @@ my_handler:
     stw r4, 16(sp)
     stw r5, 20(sp)
     stw r6, 24(sp)
+    stw r7, 28(sp)
 				
 	rdctl r16, ctl4		#check which device caused interrupt
 	andi r17, r16, 0x01
@@ -91,14 +92,15 @@ TRIGGER_RESET:
 	br HANDLER_RETURN
 	
 HANDLER_RETURN:
-	ldwio r16, 0(sp)	# recovers correct value for registers, return address and stack pointer 
-	ldwio ra, 4(sp)
-	ldwio r17, 8(sp)
-	ldwio r18, 12(sp)
+	ldw r16, 0(sp)	# recovers correct value for registers, return address and stack pointer 
+	ldw ra, 4(sp)
+	ldw r17, 8(sp)
+	ldw r18, 12(sp)
     ldw r4,16(sp)
     ldw r5,20(sp)
     ldw r6,24(sp)
-	addi sp, sp, 28
+    ldw r7,28(sp)
+	addi sp, sp, 32
 
 	addi ea, ea, -4  	
 	eret

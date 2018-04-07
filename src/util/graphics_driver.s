@@ -46,10 +46,11 @@ _init_graphics:
 # Polls until the forward buffer has been written
 .global waitForBufferWrite
 waitForBufferWrite:
-    addi sp, sp, -12
+    addi sp, sp, -16
     stw ra, 0(sp)
-    stw r17, 4(sp)
-    stw r18, 8(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)
 
     movia r17, VIDEO_CTL_BUFFER
     movi r18, 1
@@ -59,22 +60,20 @@ waitForBufferWrite:
         beq r16, r18, wait
 
     ldw ra, 0(sp)
-    ldw r17, 4(sp)
-    ldw r18, 8(sp)
-    addi sp, sp, 12
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)
+    ldw r18, 12(sp)
+    addi sp, sp, 16
     ret
 
 # Swap the buffers and update the BACK_FRAME
 .global swapBuffers
 swapBuffers:
-    addi sp, sp, -12
+    addi sp, sp, -16
     stw ra, 0(sp)
-    stw r17, 4(sp)
-    stw r18, 8(sp)
-
-    movia r17, VIDEO_CTL_BUFFER     # Does the buffer swap
-    movi r18, 1
-    stwio r18, 0(r17)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)
 
     movia r17, FRAME_BUFFER_1
     movia r18, BACK_FRAME
@@ -89,12 +88,17 @@ swapBuffers:
         movia r17, FRAME_BUFFER_2
         stw r17, 0(r18)
         br SWAP_RETURN
-        
+
     SWAP_RETURN:
+        movia r17, VIDEO_CTL_BUFFER     # Does the buffer swap
+        movi r18, 1
+        stwio r18, 0(r17)
+
         ldw ra, 0(sp)
-        ldw r17, 4(sp)
-        ldw r18, 8(sp)
-        addi sp, sp, 12
+        ldw r16, 4(sp)
+        ldw r17, 8(sp)
+        ldw r18, 12(sp)
+        addi sp, sp, 16
         ret
     
 # r4: address
@@ -123,7 +127,7 @@ DrawImage:
     add r21, r6, r23                # init height
 
 	addi r17, r21, -1                 # init height counter
-    1:	mov r16, r20             # init width counter
+    1:	addi r16, r20, -1            # init width counter
          2: ldh r18, 0(r19)     # load pixel value and increment
             addi r19, r19, 2
 

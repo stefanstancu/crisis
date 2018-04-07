@@ -124,7 +124,7 @@ _draw_zombie:
     mov r18, r4         # Save the object pointer
 
     ldw r4, 4(r18)
-    movi r5, 55
+    movi r5, 56
     movi r6, 60
     ldw r7, 0(r18)
     call DrawImage      # Draw the sprite
