@@ -36,6 +36,8 @@ draw:
     movi r7, 0
     call DrawImage
 
+    call _draw_hud
+
     movia r4, ZOMBIE_ARRAY
     call _draw_zombies
 

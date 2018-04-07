@@ -241,6 +241,7 @@ FillColour:
 # r4: col
 # r5: row
 # r6: character
+.global WriteChar
 WriteChar:
 	slli r5, r5, 7
     add r5, r5, r4
