@@ -2,6 +2,10 @@
 .equ ZOMBIE_SIZE, 32
 
 .data
+    .global HEALTH
+    HEALTH:
+        .word 0x100
+
     .global ZOMBIE_ARRAY
     ZOMBIE_ARRAY:
         .skip 24        # Save 6 words/ 5 zombies 
