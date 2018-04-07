@@ -90,10 +90,14 @@ _update_zombie:
         movi r16, 1000      # reset counter
         stw r16, 16(r18)
 
-        ldw r16, 0(r18)     # Does the move
-        addi r16, r16, 0
-        stw r16, 0(r18)
-        br UPDATE_ZOMBIE_RETURN
+        ldh r16, 0(r18)     # Does the move
+        addi r16, r16, 1    #numbers of pixels to move in one step
+
+        movi r19, 0xA0          #if Zombie poition greater 
+        bge r16, r19, attack   #than this it is doing damage
+
+        sth r16, 0(r18)         #stores half word so it doesn't touch x pos
+        br UPDATE_ZOMBIE_RETURN    
 
     inc_move_counter:
         ldw r17, 20(r18)    # increments the counter
@@ -101,7 +105,15 @@ _update_zombie:
         stw r16, 16(r18)
         br UPDATE_ZOMBIE_RETURN
         
+    attack:
+        sth r19, 0(r18)             #sets y postition to lowest zombie postiton
+        movia r18, PLAYER_HEALTH
+        ldw r19, 0(r18)
+        subi r19, r19, 1           #does 10 damage every attack
+        stw r19, 0(r18)
 
+        br UPDATE_ZOMBIE_RETURN 
+             
     UPDATE_ZOMBIE_RETURN:
     ldw ra, 0(sp)       # Epilogue
     ldw r16, 4(sp)
