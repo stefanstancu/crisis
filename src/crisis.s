@@ -22,6 +22,9 @@ update:
     movia r4, ZOMBIE
     call _update_zombie
 
+    movia r4, ZOMBIE_ARRAY
+    call _update_zombies
+
     ldw ra, 0(sp)
     addi sp, sp, 4
     ret

@@ -1,41 +1,58 @@
-.data
-	.global ZOMBIE
-    ZOMBIE:
-        .skip 32
-
 .text
-/* Initializes the zombies*/
 .global _init_zombies
 _init_zombies:
     addi sp, sp, -4
     stw ra, 0(sp)
 
     call _init_zombie_animations
+    call _init_zombie_controller
 
-    movia r17, ZOMBIE
+    movia r4, ZOMBIE
+    call _spawn_zombie
 
-    movia r16, 0x000A000A
+    ldw ra, 0(sp)
+    addi sp, sp, 4
+    ret
+
+/* Creates a zombie at the given address
+ * r4: the address to init the zombie
+ */
+.global _spawn_zombie
+_spawn_zombie:
+    addi sp, sp, -16
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)     # Prologue
+
+    mov r17, r4
+
+    movia r16, 0x000A000A   # Start at position 10, 10
     stw r16, 0(r17)
 
-    movia r16, SPRITE_ZOMBIE_WALK_1
+    movia r16, SPRITE_ZOMBIE_WALK_1     #Starting animation
     stw r16, 4(r17)
 
-    movia r16, 1000
+    movia r16, 1000                     # Move/animation counters
     stw r16, 8(r17)
 
     stw r16, 16(r17)
 
-    movia r16, 600
+    movia r16, 600                      # Move/animation speeds
     stw r16, 12(r17)
 
     stw r16, 20(r17)
 
-    movia r16, ZOMBIE_WALK_AS
+    movia r16, ZOMBIE_WALK_AS           # Starting animation
     stw r16, 24(r17)
     stw r16, 28(r17)
 
-    ldw ra, 0(sp)
-    addi sp, sp, 4
+    ldw ra, 0(sp)       # Epilogue
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)
+    ldw r18, 12(sp)
+    addi sp, sp, 16
+
     ret
 
 /* Updates a given zombie
