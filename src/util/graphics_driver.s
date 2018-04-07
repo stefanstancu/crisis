@@ -17,6 +17,10 @@
     BACK_FRAME:        # Pointer to the back buffer
         .word 0
 
+    .global BG_IMAGE
+    BG_IMAGE:
+        .incbin "../../res/background/background.bin"
+
 .text
 
 .global _init_graphics

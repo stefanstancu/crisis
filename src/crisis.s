@@ -32,8 +32,11 @@ draw:
 
     call waitForBufferWrite
 
-    movia r4, 0x0
-    call FillColour			# Fill screen with a colour
+    movia r4, BG_IMAGE
+    movi r5, 319
+    movi r6, 240
+    movi r7, 0
+    call DrawImage
 
     movia r4, ZOMBIE_ARRAY
     call _draw_zombies
