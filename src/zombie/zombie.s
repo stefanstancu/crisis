@@ -1,41 +1,69 @@
-.data
-	.global ZOMBIE
-    ZOMBIE:
-        .skip 32
-
 .text
-/* Initializes the zombies*/
 .global _init_zombies
 _init_zombies:
     addi sp, sp, -4
     stw ra, 0(sp)
 
     call _init_zombie_animations
+    call _init_zombie_controller
 
-    movia r17, ZOMBIE
+    # Spawning 1 zombie
+    movia r4, ZOMBIE_ARRAY
+    movia r5, 0x000A000A
+    call _spawn_zombie
 
-    movia r16, 0x000A000A
-    stw r16, 0(r17)
+    # Spawn another zombie
+    movia r4, ZOMBIE_ARRAY
+    movia r5, 0x00640032
+    call _spawn_zombie
 
-    movia r16, SPRITE_ZOMBIE_WALK_1
+    movia r4, ZOMBIE_ARRAY
+    movia r5, 0x00C80064
+    call _spawn_zombie
+
+    ldw ra, 0(sp)
+    addi sp, sp, 4
+    ret
+
+/* Creates a zombie at the given address
+ * r4: the address to init the zombie
+ * r5: xy position
+ */
+.global _make_zombie
+_make_zombie:
+    addi sp, sp, -16
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)     # Prologue
+
+    mov r17, r4
+
+    stw r5, 0(r17)                      # Starting position
+
+    movia r16, SPRITE_ZOMBIE_WALK_1     #Starting animation
     stw r16, 4(r17)
 
-    movia r16, 1000
+    movia r16, 1000                     # Move/animation counters
     stw r16, 8(r17)
 
     stw r16, 16(r17)
 
-    movia r16, 600
+    movia r16, 600                      # Move/animation speeds
     stw r16, 12(r17)
 
     stw r16, 20(r17)
 
-    movia r16, ZOMBIE_WALK_AS
+    movia r16, ZOMBIE_WALK_AS           # Starting animation
     stw r16, 24(r17)
     stw r16, 28(r17)
 
-    ldw ra, 0(sp)
-    addi sp, sp, 4
+    ldw ra, 0(sp)       # Epilogue
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)
+    ldw r18, 12(sp)
+    addi sp, sp, 16
+
     ret
 
 /* Updates a given zombie
@@ -135,4 +163,53 @@ addi sp, sp, -16
     ldw r18, 12(sp)
     addi sp, sp, 16
 
+    ret
+
+/* Checks if the gun is pointed at the zombie
+ * r4: zombie object pointer
+ */
+.global _check_zombie_hit
+_check_zombie_hit:
+	addi sp, sp, -16			# Prologue  
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)
+
+    mov r18, r4                 # Save the pointer
+
+    mov r4, r0                  # Fills the screen black
+    call FillColour     
+
+    mov r4, r18
+    call _draw_zombie_hitbox 
+
+    call swapBuffers
+	call waitForBufferWrite
+
+    movia r16, FLASH_DELAY
+    delay:
+        addi r16, r16, -1
+        bgt r16, r0, delay
+
+    # TODO: make a gpio driver for easy function calls
+    movia r16, GPIO 		    # Get data from sensor PIN 2 (D1)
+    ldwio r17, 0(r16)
+    srli r17, r17, 1
+    andi r17, r17, 0x01 			
+
+    beq r17, r0, KILL_ZOMBIE
+    br CHECK_ZOMBIE_HITS_RETURN
+
+    KILL_ZOMBIE:
+        movia r16, ZOMBIE_DIE_AS
+        stw r16, 28(r18)
+
+
+CHECK_ZOMBIE_HITS_RETURN:
+	ldw ra, 0(sp)			#Epilogue
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)	
+    ldw r18, 12(sp)		
+    addi sp, sp, 16
     ret

@@ -65,7 +65,6 @@ _init_zombie_animations:
 
     stw r0, 0(r17)                  # Terminate AS with a 0
 
-    .global ZOMBIE_DIE_AS
     movia r17, ZOMBIE_DIE_AS
 
     movia r16, SPRITE_ZOMBIE_DIE_1

@@ -1,3 +1,4 @@
+.global GPIO
 .equ GPIO, 0xFF200070
 .equ LED, 0xFF200000
 .equ TIMER, 0xFF202000 

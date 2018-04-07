@@ -42,17 +42,32 @@ _init_graphics:
 # Polls until the forward buffer has been written
 .global waitForBufferWrite
 waitForBufferWrite:
+    addi sp, sp, -12
+    stw ra, 0(sp)
+    stw r17, 4(sp)
+    stw r18, 8(sp)
+
     movia r17, VIDEO_CTL_BUFFER
     movi r18, 1
     wait:
         ldwio r16, 12(r17)
         andi r16, r16, 1
         beq r16, r18, wait
+
+    ldw ra, 0(sp)
+    ldw r17, 4(sp)
+    ldw r18, 8(sp)
+    addi sp, sp, 12
     ret
 
 # Swap the buffers and update the BACK_FRAME
 .global swapBuffers
 swapBuffers:
+    addi sp, sp, -12
+    stw ra, 0(sp)
+    stw r17, 4(sp)
+    stw r18, 8(sp)
+
     movia r17, VIDEO_CTL_BUFFER     # Does the buffer swap
     movi r18, 1
     stwio r18, 0(r17)
@@ -72,6 +87,10 @@ swapBuffers:
         br SWAP_RETURN
         
     SWAP_RETURN:
+        ldw ra, 0(sp)
+        ldw r17, 4(sp)
+        ldw r18, 8(sp)
+        addi sp, sp, 12
         ret
     
 # r4: address
