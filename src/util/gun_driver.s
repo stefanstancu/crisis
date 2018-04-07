@@ -46,9 +46,9 @@ _check_zombie_hits:
     mov r4, r0                  # Fills the screen black
     call FillColour     
 
-    movia r4, ZOMBIE            # Draws zombie hitbox on black screen
+    #movia r4, ZOMBIE            # Draws zombie hitbox on black screen
 
-    call _draw_zombie_hitbox 
+    #call _draw_zombie_hitbox 
 
     call swapBuffers
 	call waitForBufferWrite
@@ -69,8 +69,8 @@ _check_zombie_hits:
 
     KILL_ZOMBIE:
         movia r16, ZOMBIE_DIE_AS
-        movia r17, ZOMBIE
-        stw r16, 28(r17)
+        # movia r17, ZOMBIE
+        # stw r16, 28(r17)
 
 
 CHECK_ZOMBIE_HITS_RETURN:

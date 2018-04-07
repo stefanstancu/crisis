@@ -19,9 +19,6 @@ update:
     addi sp, sp, -4
     stw ra, 0(sp)
 
-    movia r4, ZOMBIE
-    call _update_zombie
-
     movia r4, ZOMBIE_ARRAY
     call _update_zombies
 
@@ -38,8 +35,8 @@ draw:
     movia r4, 0x0
     call FillColour			# Fill screen with a colour
 
-    movia r4, ZOMBIE
-    call _draw_zombie
+    movia r4, ZOMBIE_ARRAY
+    call _draw_zombies
 
     call swapBuffers
 

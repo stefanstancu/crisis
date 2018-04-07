@@ -7,7 +7,18 @@ _init_zombies:
     call _init_zombie_animations
     call _init_zombie_controller
 
-    movia r4, ZOMBIE
+    # Spawning 1 zombie
+    movia r4, ZOMBIE_ARRAY
+    movia r5, 0x000A000A
+    call _spawn_zombie
+
+    # Spawn another zombie
+    movia r4, ZOMBIE_ARRAY
+    movia r5, 0x00640032
+    call _spawn_zombie
+
+    movia r4, ZOMBIE_ARRAY
+    movia r5, 0x00C80064
     call _spawn_zombie
 
     ldw ra, 0(sp)
@@ -16,9 +27,10 @@ _init_zombies:
 
 /* Creates a zombie at the given address
  * r4: the address to init the zombie
+ * r5: xy position
  */
-.global _spawn_zombie
-_spawn_zombie:
+.global _make_zombie
+_make_zombie:
     addi sp, sp, -16
     stw ra, 0(sp)
     stw r16, 4(sp)
@@ -27,8 +39,7 @@ _spawn_zombie:
 
     mov r17, r4
 
-    movia r16, 0x000A000A   # Start at position 10, 10
-    stw r16, 0(r17)
+    stw r5, 0(r17)                      # Starting position
 
     movia r16, SPRITE_ZOMBIE_WALK_1     #Starting animation
     stw r16, 4(r17)
