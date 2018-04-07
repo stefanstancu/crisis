@@ -52,6 +52,7 @@ _make_zombie:
     movia r16, 600                      # Move/animation speeds
     stw r16, 12(r17)
 
+    movia r16, 400 
     stw r16, 20(r17)
 
     movia r16, ZOMBIE_WALK_AS           # Starting animation
@@ -88,7 +89,7 @@ _update_zombie:
     br inc_move_counter
 
     move_z:
-        movi r16, 100000      # reset counter
+        movia r16, 1000      # reset counter
         stw r16, 16(r18)
 
         ldh r16, 0(r18)     # Does the move
