@@ -52,6 +52,7 @@ _make_zombie:
     movia r16, 600                      # Move/animation speeds
     stw r16, 12(r17)
 
+    movia r16, 400 
     stw r16, 20(r17)
 
     movia r16, ZOMBIE_WALK_AS           # Starting animation
@@ -71,11 +72,12 @@ _make_zombie:
 */
 .global _update_zombie
 _update_zombie:
-    addi sp, sp, -16
+    addi sp, sp, -20
     stw ra, 0(sp)
     stw r16, 4(sp)
     stw r17, 8(sp)
-    stw r18, 12(sp)     # Prologue
+    stw r18, 12(sp)
+    stw r19, 16(sp)     # Prologue
 
     mov r18, r4            # Save the zombie object pointer
 
@@ -87,7 +89,7 @@ _update_zombie:
     br inc_move_counter
 
     move_z:
-        movi r16, 1000      # reset counter
+        movia r16, 1000      # reset counter
         stw r16, 16(r18)
 
         ldh r16, 0(r18)     # Does the move
@@ -119,8 +121,8 @@ _update_zombie:
     ldw r16, 4(sp)
     ldw r17, 8(sp)
     ldw r18, 12(sp)
-    addi sp, sp, 16
-
+    ldw r19, 16(sp)
+    addi sp, sp, 20
     ret
 /* Draws a given zombie
  * r4: zombie object pointer
