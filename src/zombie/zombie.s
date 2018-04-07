@@ -88,7 +88,7 @@ _update_zombie:
     br inc_move_counter
 
     move_z:
-        movi r16, 1000      # reset counter
+        movi r16, 100000      # reset counter
         stw r16, 16(r18)
 
         ldh r16, 0(r18)     # Does the move
