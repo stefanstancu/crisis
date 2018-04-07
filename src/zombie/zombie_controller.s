@@ -146,3 +146,34 @@ _spawn_zombie:
     addi sp, sp, 16
 
     ret
+
+/* Checks all the zombies in the given array for a collision
+ * r4: the entity array
+ */
+.global _check_zombie_hits
+_check_zombie_hits:
+    addi sp, sp, -16
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)     # Prologue
+
+    mov r18, r4
+
+    check_loop:
+        ldw r4, 0(r18)
+        beq r4, r0, CHECK_RETURN   # If end of array
+        ldw r16, 4(r4)
+        beq r16, r0, CHECK_RETURN   # If the zombie is flagged as dead
+        call _check_zombie_hit
+        addi r18, r18, 4            # Go to next entry
+        br check_loop
+
+    CHECK_RETURN:
+    ldw ra, 0(sp)       # Epilogue
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)
+    ldw r18, 12(sp)
+    addi sp, sp, 16
+
+    ret

@@ -164,3 +164,52 @@ addi sp, sp, -16
     addi sp, sp, 16
 
     ret
+
+/* Checks if the gun is pointed at the zombie
+ * r4: zombie object pointer
+ */
+.global _check_zombie_hit
+_check_zombie_hit:
+	addi sp, sp, -16			# Prologue  
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)
+
+    mov r18, r4                 # Save the pointer
+
+    mov r4, r0                  # Fills the screen black
+    call FillColour     
+
+    mov r4, r18
+    call _draw_zombie_hitbox 
+
+    call swapBuffers
+	call waitForBufferWrite
+
+    movia r16, FLASH_DELAY
+    delay:
+        addi r16, r16, -1
+        bgt r16, r0, delay
+
+    # TODO: make a gpio driver for easy function calls
+    movia r16, GPIO 		    # Get data from sensor PIN 2 (D1)
+    ldwio r17, 0(r16)
+    srli r17, r17, 1
+    andi r17, r17, 0x01 			
+
+    beq r17, r0, KILL_ZOMBIE
+    br CHECK_ZOMBIE_HITS_RETURN
+
+    KILL_ZOMBIE:
+        movia r16, ZOMBIE_DIE_AS
+        stw r16, 28(r18)
+
+
+CHECK_ZOMBIE_HITS_RETURN:
+	ldw ra, 0(sp)			#Epilogue
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)	
+    ldw r18, 12(sp)		
+    addi sp, sp, 16
+    ret
