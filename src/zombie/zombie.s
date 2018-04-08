@@ -219,6 +219,11 @@ _check_zombie_hit:
     br CHECK_ZOMBIE_HITS_RETURN
 
     KILL_ZOMBIE:
+        movia r16, SCORE            # Increment score
+        ldw r17, 0(r16)
+        addi r17, r17, 1
+        stw r17, 0(r16)
+
         movia r16, ZOMBIE_DIE_AS
         stw r0, 24(r18)              # Mark for in-death-process
         stw r16, 28(r18)

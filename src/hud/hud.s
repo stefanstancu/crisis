@@ -12,6 +12,7 @@
     .global PLAYER_HEALTH
     PLAYER_HEALTH:
         .word 100
+    .global SCORE
     SCORE:
         .word 0
     AMMO:
