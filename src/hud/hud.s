@@ -5,6 +5,10 @@
 .equ SCORE_ROW, 55
 
 .data
+    .global SS_IMAGE
+    SS_IMAGE:
+        .incbin "../../res/background/startscreen.bin"
+
     .global PLAYER_HEALTH
     PLAYER_HEALTH:
         .word 100

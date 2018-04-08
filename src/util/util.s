@@ -5,6 +5,10 @@ _init:
     addi sp, sp, -4
     stw ra, 0(sp)
 
+    movi r16, GAME_STATE
+    movi r17, -3
+    stw r17, 0(r16)
+
     call _init_graphics
     call _init_hud
     call _init_zombies

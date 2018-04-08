@@ -167,7 +167,7 @@ _check_zombie_hits:
     check_loop:
         ldw r4, 0(r18)
         beq r4, r0, CHECK_RETURN   # If end of array
-        ldw r16, 4(r4)
+        ldw r16, 24(r4)
         beq r16, r0, check_cont   # If the zombie is flagged as dead
         call _check_zombie_hit
 

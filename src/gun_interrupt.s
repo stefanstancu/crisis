@@ -61,6 +61,11 @@ my_handler:
 	bgt r17, r0, TRIGGER_PULL
 
 TRIGGER_PULL:
+
+    movia r17, GAME_STATE
+    ldw r16, 0(r17)
+    ble r16, r0, START_GAME
+
 	rdctl r16, ctl3
 	movia r17, ~(1<<12) 
 	and r16, r16, r17
@@ -91,6 +96,16 @@ TRIGGER_RESET:
 
 	br HANDLER_RETURN
 	
+START_GAME:
+    addi r16, r16, 1
+    stw r16, 0(r17)
+
+	movia r16, 0xFFFFFFFF	#writes 0 to acknowledge bit for GPIO pins
+	movia et, GPIO 		
+	stwio r16, 12(et)
+
+    br HANDLER_RETURN
+
 HANDLER_RETURN:
 	ldw r16, 0(sp)	# recovers correct value for registers, return address and stack pointer 
 	ldw ra, 4(sp)
