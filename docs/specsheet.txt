@@ -1,0 +1,14 @@
+Zombie Object:
+    base: upper 16 - x position
+          lower 16 - y position
+
+    4   : sprite pointer (also used as a death flag. If 0, the object is considered "deleted"
+
+    8   : animation controller counter
+    12  : animation speed
+    
+    16  : movement counter
+    20  : movement speed
+
+    24  : animation start pointer
+    28  : animation sequence pointer (dereferences to a pointer to the frame to draw)

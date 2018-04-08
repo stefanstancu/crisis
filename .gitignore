@@ -1,0 +1,10 @@
+//Monitor Program Project
+*.amp
+
+//Compiled Files
+*.o
+*.elf
+*.srec
+
+//vim files
+*.swp

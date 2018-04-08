@@ -1,0 +1,35 @@
+Animation Sequence
+
+An animation sequence is described as a null pointer delimited list of addresses which point to frames.
+This way, repetition of the same frames is allowed. Multiple objects can share the same animation sequence, and animation sequences can but switched at any time.
+
+Ex. animation sequence
+
+| Frame number | Address of frame |
+-----------------------------------
+|       0      |       0x01       |     <- Label points here (ex. ZOMBIE_WALK_AS)
+|       1      |       0x0A       |
+|       2      |       0x11       |
+|       3      |       0x1A       |
+|       4      |       0x21       |
+|      N/A     |       0x00       |
+
+Ex. code for animation controller
+
+let a = animation_sequence_pointer;
+let as = animation_start_pointer;
+
+as, a = ZOMBIE_WALK_AS          // Set the sequence for next draw
+
+some where in draw
+:
+:
+do_animation(){
+    a = a + 1;
+    if *a == 0:
+        a = as;
+    else:
+        sprite_pointer = *a;
+}
+
+
