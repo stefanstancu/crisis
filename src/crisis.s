@@ -7,10 +7,11 @@
 _start:
 	movia sp, 0x04000000	# Initial stack pointer
     call _init
-    movi r5, 500           #here to test random number generator
-    movi r4, 200
     game_loop:
         
+        movi r5, 500           #here to test random number generator
+        movi r4, 200
+
         call _get_random_number
         call update
         call draw

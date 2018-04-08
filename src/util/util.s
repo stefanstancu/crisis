@@ -1,5 +1,5 @@
 .equ TIMER2, 0xFF202020
-.equ RANDOM_NUM_MAX, 0x1388 #5000
+.equ RANDOM_NUM_MAX, 500000000
 .global _init
 _init:
     addi sp, sp, -4
@@ -70,8 +70,9 @@ _get_random_number:
 
     sub r5, r5, r4      #stores difference between upper and lower bound
     movia r16, TIMER2
-    ldh r17, 16(r16)    #lower 16 bits of timer snapshot->r17
-    ldh r18, 20(r16)    #upper 16 bits of timer snapshot->r18
+    stwio r0, 16(r16)    # Why am I doing this? Because your timer is broken.
+    ldwio r17, 16(r16)    #lower 16 bits of timer snapshot->r17
+    ldwio r18, 20(r16)    #upper 16 bits of timer snapshot->r18
 
     slli r19, r18, 16   #cancatonates the timer snapshot together
     or r19, r19, r17
@@ -101,10 +102,11 @@ _init_random_number_generator:
     stw r19, 16(sp)     # Prologue
 
     movia r16, TIMER2                   #sets period of timer to RANDOM_NUM_MAX
-    movia r17, %lo(RANDOM_NUM_MAX)
-    movia r18, %hi(RANDOM_NUM_MAX)
+    movi r17, %lo(RANDOM_NUM_MAX)
+    movi r18, %hi(RANDOM_NUM_MAX)
     stwio r17, 8(r16)
     stwio r18, 12(r16)
+
 
     movi r17, 0x06             #starts timer so it keeps repeating after timeout
     stwio r17, 4(r16)
