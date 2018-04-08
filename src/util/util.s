@@ -8,7 +8,7 @@ _init:
     call _init_graphics
     call _init_zombies
     call _init_interrupts
-    call _init_random_number_generator
+    call _init_rand
 
     ldw ra, 0(sp)
     addi sp, sp, 4
@@ -59,8 +59,8 @@ _num_to_ascii:
 #r4->lower bound for random number
 #r5->upper bound for random number
 #r2<- random number generated (return value)
-.global _get_random_number
-_get_random_number:
+.global _rand
+_rand:
     addi sp, sp, -20
     stw ra, 0(sp)
     stw r16, 4(sp)
@@ -92,8 +92,8 @@ _get_random_number:
     addi sp, sp, 20
     ret
 
-.global _init_random_number_generator
-_init_random_number_generator:
+.global _init_rand
+_init_rand:
     addi sp, sp, -20
     stw ra, 0(sp)
     stw r16, 4(sp)
