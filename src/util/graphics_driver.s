@@ -28,6 +28,9 @@ _init_graphics:
     addi sp, sp, -4
     stw ra, 0(sp)
 
+    movia r17, BACK_FRAME
+    stw r0, 0(r17)
+
     movia r17, VIDEO_CTL_BUFFER     # Set the frames in the controller
 
     movia r16, FRAME_BUFFER_2
@@ -75,12 +78,17 @@ swapBuffers:
     stw r17, 8(sp)
     stw r18, 12(sp)
 
-    movia r17, FRAME_BUFFER_1
     movia r18, BACK_FRAME
-    ldwio r16, 0(r18)
+    ldw r16, 0(r18)
+
+    movia r17, FRAME_BUFFER_1
     beq r16, r17, SET_FRAME_2
 
+    movia r17, FRAME_BUFFER_2
+    beq r16, r17, SET_FRAME_1
+
     SET_FRAME_1:
+        movia r17, FRAME_BUFFER_1
         stw r17, 0(r18)
         br SWAP_RETURN
 

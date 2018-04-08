@@ -7,20 +7,6 @@ _init_zombies:
     call _init_zombie_animations
     call _init_zombie_controller
 
-    # Spawning 1 zombie
-    movia r4, ZOMBIE_ARRAY
-    movia r5, 0x000A000A
-    call _spawn_zombie
-
-    # Spawn another zombie
-    movia r4, ZOMBIE_ARRAY
-    movia r5, 0x00640032
-    call _spawn_zombie
-
-    movia r4, ZOMBIE_ARRAY
-    movia r5, 0x00C80064
-    call _spawn_zombie
-
     ldw ra, 0(sp)
     addi sp, sp, 4
     ret
@@ -28,6 +14,7 @@ _init_zombies:
 /* Creates a zombie at the given address
  * r4: the address to init the zombie
  * r5: xy position
+ * r6: movement speed 
  */
 .global _make_zombie
 _make_zombie:
@@ -49,11 +36,10 @@ _make_zombie:
 
     stw r16, 16(r17)
 
-    movia r16, 600                      # Move/animation speeds
+    movia r16, 600                      # Move speeds
     stw r16, 12(r17)
-
-    movia r16, 400 
-    stw r16, 20(r17)
+ 
+    stw r6, 20(r17)                     # Move speed
 
     movia r16, ZOMBIE_WALK_AS           # Starting animation
     stw r16, 24(r17)
@@ -96,7 +82,11 @@ _update_zombie:
         stw r16, 16(r18)
 
         ldh r16, 0(r18)     # Does the move
-        addi r16, r16, 1    # numbers of pixels to move in one step
+        movia r17, SCORE
+        ldw r19, 0(r17)
+        movi r17, 10
+        div r19, r19, r17
+        add r16, r16, r19    # numbers of pixels to move in one step
 
         movi r19, 0xA0          # if zombie position greater 
         bge r16, r19, attack    # than this it is doing damage
@@ -184,6 +174,7 @@ addi sp, sp, -16
 
 /* Checks if the gun is pointed at the zombie
  * r4: zombie object pointer
+ * r2: 0 if the zombie was killed
  */
 .global _check_zombie_hit
 _check_zombie_hit:
@@ -216,6 +207,7 @@ _check_zombie_hit:
     andi r17, r17, 0x01 			
 
     beq r17, r0, KILL_ZOMBIE
+    movi r2, 1
     br CHECK_ZOMBIE_HITS_RETURN
 
     KILL_ZOMBIE:
@@ -227,6 +219,7 @@ _check_zombie_hit:
         movia r16, ZOMBIE_DIE_AS
         stw r0, 24(r18)              # Mark for in-death-process
         stw r16, 28(r18)
+        movi r2, 0
 
 
 CHECK_ZOMBIE_HITS_RETURN:

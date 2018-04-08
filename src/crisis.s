@@ -29,6 +29,9 @@ update:
     ble r5, r0, skip
 
     movia r4, ZOMBIE_ARRAY
+    call _update_controller
+
+    movia r4, ZOMBIE_ARRAY
     call _update_zombies
 
     skip:
@@ -38,8 +41,13 @@ update:
     ret
 
 draw:
-    addi sp, sp, -4
+    addi sp, sp, -8
     stw ra, 0(sp)
+
+    rdctl r4, ctl0
+    stw r4, 4(sp)
+
+    wrctl ctl0, r0
 
     movi r4, GAME_STATE
     ldw r5, 0(r4)
@@ -67,10 +75,13 @@ draw:
         br draw_return
 
     draw_return:
-    call swapBuffers
     call waitForBufferWrite
+    call swapBuffers
+
+    ldw r4, 4(sp)
+    wrctl ctl0, r4
 
     ldw ra, 0(sp)
-    addi sp, sp, 4
+    addi sp, sp, 8
 
     ret
