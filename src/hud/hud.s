@@ -8,6 +8,9 @@
     .global SS_IMAGE
     SS_IMAGE:
         .incbin "../../res/background/startscreen.bin"
+    .global ES_IMAGE
+    ES_IMAGE:
+        .incbin "../../res/background/endscreen.bin"
 
     .global PLAYER_HEALTH
     PLAYER_HEALTH:
@@ -128,5 +131,22 @@ draw_score:
     ldw r17, 8(sp)
     ldw r18, 12(sp)
     addi sp, sp, 16
+
+    ret
+
+#no parameters
+#returns player health->r2
+.global _get_health
+_get_health:
+    addi sp, sp, -8
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+
+    movia r16, PLAYER_HEALTH
+    ldw r2, 0(r16) 
+
+    ldw ra, 0(sp)       # Epilogue
+    ldw r16, 4(sp)
+    addi sp, sp, 8
 
     ret

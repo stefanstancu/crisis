@@ -112,7 +112,6 @@ _init_rand:
     stwio r17, 8(r16)
     stwio r18, 12(r16)
 
-
     movi r17, 0x06             #starts timer so it keeps repeating after timeout
     stwio r17, 4(r16)
 
@@ -122,4 +121,40 @@ _init_rand:
     ldw r18, 12(sp)
     ldw r19, 16(sp)
     addi sp, sp, 20
+    ret
+
+.global _reset_game
+_reset_game:
+    addi sp, sp, -16
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)
+
+    movia r17, PLAYER_HEALTH         # Reset health
+    movi r16, 100
+    stw r16, 0(r17)
+
+    movia r17, SCORE                 # Reset score
+    stw r0, 0(r17)
+
+    movia r16, ZOMBIE_ARRAY          # Clear zombie array
+    clear_loop:
+        ldw r17, 0(r16)
+        beq r17, r0, break
+        stw r0, 4(r17)
+        addi r16, r16, 4
+        br clear_loop
+    break:
+
+    movia r17, GAME_STATE           # Set game state to -3
+    movi r16, -3
+    stw r16, 0(r17)
+
+    reset_game_return:
+    ldw ra, 0(sp)       # Epilogue
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)
+    ldw r18, 12(sp)
+    addi sp, sp, 16
     ret
