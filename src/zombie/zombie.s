@@ -89,14 +89,17 @@ _update_zombie:
     br inc_move_counter
 
     move_z:
+        ldw r16, 24(r18)
+        beq r16, r0, UPDATE_ZOMBIE_RETURN    # Don't move if in death progress
+
         movia r16, 1000      # reset counter
         stw r16, 16(r18)
 
         ldh r16, 0(r18)     # Does the move
-        addi r16, r16, 1    #numbers of pixels to move in one step
+        addi r16, r16, 1    # numbers of pixels to move in one step
 
-        movi r19, 0xA0          #if Zombie poition greater 
-        bge r16, r19, attack   #than this it is doing damage
+        movi r19, 0xA0          # if zombie position greater 
+        bge r16, r19, attack    # than this it is doing damage
 
         sth r16, 0(r18)         #stores half word so it doesn't touch x pos
         br UPDATE_ZOMBIE_RETURN    
@@ -216,7 +219,13 @@ _check_zombie_hit:
     br CHECK_ZOMBIE_HITS_RETURN
 
     KILL_ZOMBIE:
+        movia r16, SCORE            # Increment score
+        ldw r17, 0(r16)
+        addi r17, r17, 1
+        stw r17, 0(r16)
+
         movia r16, ZOMBIE_DIE_AS
+        stw r0, 24(r18)              # Mark for in-death-process
         stw r16, 28(r18)
 
 

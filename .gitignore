@@ -5,3 +5,6 @@
 *.o
 *.elf
 *.srec
+
+//vim files
+*.swp

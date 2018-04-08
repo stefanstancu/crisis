@@ -99,7 +99,8 @@ _init_zombie_animations:
     stw r16, 0(r17)
     addi r17, r17, 4
 
-    stw r0, 0(r17)                  # Terminate AS with a 0
+    movi r16, 1
+    stw r16, 0(r17)                  # Terminate AS with a 1 (kill signal)
 
     ldw ra, 0(sp)                    # Epilogue
     ldw r16, 4(sp)
@@ -164,6 +165,8 @@ set_next_frame_zombie:
     ldw r16, 28(r4)                 # Load the animation sequence pointer
     ldw r17, 4(r16)                 # Load the next frame pointer in the sequence
     beq r17, r0, RESET_ANIMATION    # If next frame is zero
+    movi r18, 1
+    beq r17, r18, DELETE_ZOMBIE     # If the next frame is 1, delete this instance
     br NEXT_FRAME
 
     NEXT_FRAME:
@@ -179,6 +182,10 @@ set_next_frame_zombie:
 
         ldw r17, 0(r16)
         stw r17, 4(r4)              # Reset the animation sequence pointer to the start of animation
+        br NEXT_FRAME_RETURN
+
+    DELETE_ZOMBIE:
+        stw r0, 4(r4)               # Mark deleted
         br NEXT_FRAME_RETURN
 
     NEXT_FRAME_RETURN:

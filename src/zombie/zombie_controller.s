@@ -62,8 +62,10 @@ _update_zombies:
         ldw r4, 0(r18)
         beq r4, r0, UPDATE_RETURN   # If end of array
         ldw r16, 4(r4)
-        beq r16, r0, UPDATE_RETURN   # If the zombie is flagged as dead
+        beq r16, r0, update_cont   # If the zombie is flagged as dead
         call _update_zombie
+
+        update_cont:
         addi r18, r18, 4            # Go to next entry
         br update_loop
 
@@ -93,8 +95,10 @@ _draw_zombies:
         ldw r4, 0(r18)
         beq r4, r0, DRAW_RETURN   # If end of array
         ldw r16, 4(r4)
-        beq r16, r0, DRAW_RETURN   # If the zombie is flagged as dead
+        beq r16, r0, draw_cont   # If the zombie is flagged as dead
         call _draw_zombie
+
+        draw_cont:
         addi r18, r18, 4            # Go to next entry
         br draw_loop
 
@@ -163,9 +167,11 @@ _check_zombie_hits:
     check_loop:
         ldw r4, 0(r18)
         beq r4, r0, CHECK_RETURN   # If end of array
-        ldw r16, 4(r4)
-        beq r16, r0, CHECK_RETURN   # If the zombie is flagged as dead
+        ldw r16, 24(r4)
+        beq r16, r0, check_cont   # If the zombie is flagged as dead
         call _check_zombie_hit
+
+        check_cont:
         addi r18, r18, 4            # Go to next entry
         br check_loop
 
