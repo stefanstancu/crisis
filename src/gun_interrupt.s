@@ -110,7 +110,11 @@ START_GAME:
     br HANDLER_RETURN
 
 END_GAME_RESET:
-	call _init
+	movia r16, 0xFFFFFFFF	#writes 0 to acknowledge bit for GPIO pins
+	movia et, GPIO 		
+	stwio r16, 12(et)
+
+	call _reset_game
 	br HANDLER_RETURN
 
 

@@ -29,7 +29,7 @@ update:
 
     movi r4, GAME_STATE
     ldw r5, 0(r4)
-    ble r5, r0, skip
+    ble r5, r0, update_return
 
     movia r4, ZOMBIE_ARRAY
     call _update_controller
@@ -37,16 +37,17 @@ update:
     movia r4, ZOMBIE_ARRAY
     call _update_zombies
 
-    skip:
+    br update_return
 
+    player_died:
+        movi r4, GAME_STATE
+        movi r5, 3
+        stw r5, 0(r4)
+
+    update_return:
     ldw ra, 0(sp)
     addi sp, sp, 4
     ret
-
-    player_died:
-    movi r4, GAME_STATE
-    movi r5, 3
-    stw r5, 0(r3)
 
 draw:
     addi sp, sp, -8
