@@ -6,6 +6,7 @@ _init:
     stw ra, 0(sp)
 
     call _init_graphics
+    call _init_hud
     call _init_zombies
     call _init_interrupts
     call _init_rand
