@@ -130,3 +130,23 @@ draw_score:
     addi sp, sp, 16
 
     ret
+
+#no parameters
+#returns player health->r2
+.global _get_health
+_get_health:
+    addi sp, sp, -16
+    stw ra, 0(sp)
+    stw r16, 4(sp)
+    stw r17, 8(sp)
+    stw r18, 12(sp)     # Prologue
+
+    movia r16, PLAYER_HEALTH
+    ldw r17, 0(r16) 
+    mov r2, r17
+
+    ldw ra, 0(sp)       # Epilogue
+    ldw r16, 4(sp)
+    ldw r17, 8(sp)
+    ldw r18, 12(sp)
+    addi sp, sp, 16
