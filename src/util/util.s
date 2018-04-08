@@ -58,6 +58,7 @@ _num_to_ascii:
 #parameters
 #r4->lower bound for random number
 #r5->upper bound for random number
+#r2<- random number generated (return value)
 .global _get_random_number
 _get_random_number:
     addi sp, sp, -20
@@ -80,6 +81,7 @@ _get_random_number:
     sub r17, r19, r17
 
     add r17, r17, r4    #random number between bounds
+    mov r2, r17
 
     ldw ra, 0(sp)       # Epilogue
     ldw r16, 4(sp)
